@@ -19,14 +19,8 @@
         totalAmount: document.getElementById('totalAmount'),
         payButton: document.getElementById('payButton'),
         errorMessage: document.getElementById('errorMessage'),
-        loading: document.getElementById('loading'),
-        refundModal: document.getElementById('refundModal'),
-        modalConfirm: document.getElementById('modalConfirm'),
-        modalCancel: document.getElementById('modalCancel')
+        loading: document.getElementById('loading')
     };
-
-    // 임시 폼 데이터 저장
-    let pendingFormData = null;
 
     // 초기화
     async function init() {
@@ -102,24 +96,7 @@
     // 이벤트 리스너 설정
     function setupEventListeners() {
         if (elements.customerForm) {
-            elements.customerForm.addEventListener('submit', showRefundModal);
-        }
-
-        // 모달 버튼 이벤트
-        if (elements.modalConfirm) {
-            elements.modalConfirm.addEventListener('click', handlePayment);
-        }
-        if (elements.modalCancel) {
-            elements.modalCancel.addEventListener('click', hideRefundModal);
-        }
-
-        // 모달 외부 클릭 시 닫기
-        if (elements.refundModal) {
-            elements.refundModal.addEventListener('click', (e) => {
-                if (e.target === elements.refundModal) {
-                    hideRefundModal();
-                }
-            });
+            elements.customerForm.addEventListener('submit', handlePayment);
         }
 
         // 전화번호 자동 포맷팅
@@ -133,45 +110,6 @@
         if (birthInput) {
             birthInput.addEventListener('input', formatBirthDate);
         }
-    }
-
-    // 환불 안내 모달 표시
-    function showRefundModal(e) {
-        e.preventDefault();
-        hideError();
-
-        // 상품 선택 확인
-        if (!selectedProduct) {
-            showError('상품을 선택해주세요.');
-            return;
-        }
-
-        // 폼 데이터 수집 및 검증
-        const formData = {
-            productId: selectedProduct.id,
-            customerName: document.getElementById('customerName').value.trim(),
-            customerPhone: document.getElementById('customerPhone').value.trim(),
-            customerEmail: document.getElementById('customerEmail').value.trim(),
-            customerBirth: document.getElementById('customerBirth').value.trim()
-        };
-
-        if (!validateForm(formData)) return;
-
-        // 폼 데이터 저장
-        pendingFormData = formData;
-
-        // 모달 표시
-        if (elements.refundModal) {
-            elements.refundModal.classList.add('active');
-        }
-    }
-
-    // 환불 안내 모달 닫기
-    function hideRefundModal() {
-        if (elements.refundModal) {
-            elements.refundModal.classList.remove('active');
-        }
-        pendingFormData = null;
     }
 
     // 전화번호 포맷팅
@@ -203,14 +141,27 @@
     }
 
     // 결제 처리
-    async function handlePayment() {
-        // 모달 닫기
-        hideRefundModal();
+    async function handlePayment(e) {
+        e.preventDefault();
+        hideError();
 
-        if (!pendingFormData) {
-            showError('결제 정보가 없습니다. 다시 시도해주세요.');
+        // 상품 선택 확인
+        if (!selectedProduct) {
+            showError('상품을 선택해주세요.');
             return;
         }
+
+        // 폼 데이터 수집
+        const formData = {
+            productId: selectedProduct.id,
+            customerName: document.getElementById('customerName').value.trim(),
+            customerPhone: document.getElementById('customerPhone').value.trim(),
+            customerEmail: document.getElementById('customerEmail').value.trim(),
+            customerBirth: document.getElementById('customerBirth').value.trim()
+        };
+
+        // 유효성 검사
+        if (!validateForm(formData)) return;
 
         try {
             showLoading(true);
@@ -220,7 +171,7 @@
             const orderResponse = await fetch(`${CONFIG.API_BASE_URL}/payments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(pendingFormData)
+                body: JSON.stringify(formData)
             });
 
             const orderData = await orderResponse.json();
@@ -238,7 +189,6 @@
         } finally {
             showLoading(false);
             disablePayButton(false);
-            pendingFormData = null;
         }
     }
 
