@@ -4,6 +4,8 @@ pipeline {
     environment {
         DEPLOY_PATH = '/app/service/prep'
         SERVER_PATH = '/app/service/prep/server'
+        SSH_HOST = '115.68.179.155'
+        SSH_USER = 'deploy'  // 배포용 사용자
     }
 
     stages {
@@ -13,37 +15,22 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Deploy') {
             steps {
-                dir('server') {
-                    sh 'npm install --production'
+                sshagent(['deploy-ssh-key']) {
+                    sh '''
+                        # 파일 전송
+                        rsync -avz --exclude='node_modules' --exclude='.git' \
+                            ./ ${SSH_USER}@${SSH_HOST}:${DEPLOY_PATH}/
+
+                        # 서버에서 npm install 및 PM2 재시작
+                        ssh ${SSH_USER}@${SSH_HOST} << 'ENDSSH'
+                            cd /app/service/prep/server
+                            npm install --production
+                            pm2 restart prep || pm2 start src/app.js --name prep
+ENDSSH
+                    '''
                 }
-            }
-        }
-
-        stage('Deploy Frontend') {
-            steps {
-                sh '''
-                    # 프론트엔드 파일 배포
-                    sudo mkdir -p ${DEPLOY_PATH}
-                    sudo cp -r index.html payment.html payment-success.html payment-fail.html ${DEPLOY_PATH}/
-                    sudo cp -r css js images ${DEPLOY_PATH}/ 2>/dev/null || true
-                '''
-            }
-        }
-
-        stage('Deploy Backend') {
-            steps {
-                sh '''
-                    # 백엔드 배포
-                    sudo mkdir -p ${SERVER_PATH}
-                    sudo cp -r server/src server/package.json server/package-lock.json ${SERVER_PATH}/
-
-                    # PM2로 서버 재시작
-                    cd ${SERVER_PATH}
-                    sudo npm install --production
-                    pm2 restart prep || pm2 start src/app.js --name prep
-                '''
             }
         }
     }
