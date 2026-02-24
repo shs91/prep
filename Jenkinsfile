@@ -49,8 +49,8 @@ DB_PASSWORD=aws190131!
 DB_NAME=riseone
 
 # 토스 페이먼츠
-TOSS_CLIENT_KEY=test_ck_jExPeJWYVQxQJlloAjJo349R5gvN
-TOSS_SECRET_KEY=test_sk_vZnjEJeQVxGXqW9LJvlD3PmOoBN0
+TOSS_CLIENT_KEY=test_ck_LlDJaYngrozLoW0KWKblVezGdRpX
+TOSS_SECRET_KEY=test_sk_ZLKGPx4M3M1w0ZWybw423BaWypv1
 
 # 이메일 (SMTP)
 SMTP_HOST=smtp.gmail.com
