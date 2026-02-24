@@ -4,7 +4,7 @@
 
     // 설정
     const CONFIG = {
-        API_BASE_URL: '/api',
+        API_BASE_URL: '/prep/api',
         TOSS_CLIENT_KEY: 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq' // 테스트 키 (실제 운영시 변경 필요)
     };
 
@@ -231,8 +231,8 @@
             },
             orderId: orderData.orderId,
             orderName: orderData.orderName,
-            successUrl: `${window.location.origin}/payment-success.html`,
-            failUrl: `${window.location.origin}/payment-fail.html`,
+            successUrl: `${window.location.origin}/prep/payment-success.html`,
+            failUrl: `${window.location.origin}/prep/payment-fail.html`,
             card: {
                 useEscrow: false,
                 flowMode: 'DEFAULT',
