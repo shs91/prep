@@ -29,9 +29,9 @@ pipeline {
                             fi
 
                             # npm install 및 PM2 재시작
-                            cd server
+                            cd /app/service/prep/server
                             npm install --production
-                            pm2 restart prep || pm2 start src/app.js --name prep
+                            pm2 restart prep || pm2 start /app/service/prep/server/src/app.js --name prep
 ENDSSH
                     '''
                 }
