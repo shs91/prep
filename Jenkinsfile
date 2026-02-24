@@ -16,55 +16,39 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(['prep-dev-deploy-ssh-key']) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} << 'ENDSSH'
-                            set -e
+                withCredentials([file(credentialsId: 'prep-env-file', variable: 'ENV_FILE')]) {
+                    sshagent(['prep-dev-deploy-ssh-key']) {
+                        sh '''
+                            # .env 파일을 서버로 전송
+                            scp -o StrictHostKeyChecking=no ${ENV_FILE} ${SSH_USER}@${SSH_HOST}:/tmp/prep.env
 
-                            DEPLOY_PATH=/app/service/prep
+                            ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} << 'ENDSSH'
+                                set -e
 
-                            # .git 폴더 존재 여부로 판단
-                            if [ -d "$DEPLOY_PATH/.git" ]; then
-                                cd $DEPLOY_PATH
-                                git fetch origin
-                                git reset --hard origin/develop
-                            else
-                                # 디렉토리 정리 후 clone
-                                rm -rf $DEPLOY_PATH/*
-                                rm -rf $DEPLOY_PATH/.* 2>/dev/null || true
-                                git clone -b develop https://github.com/shs91/prep.git $DEPLOY_PATH
-                            fi
+                                DEPLOY_PATH=/app/service/prep
 
-                            # .env 파일 생성
-                            cat > $DEPLOY_PATH/server/.env << 'ENVEOF'
-# 서버
-PORT=3001
-NODE_ENV=development
+                                # .git 폴더 존재 여부로 판단
+                                if [ -d "$DEPLOY_PATH/.git" ]; then
+                                    cd $DEPLOY_PATH
+                                    git fetch origin
+                                    git reset --hard origin/develop
+                                else
+                                    # 디렉토리 정리 후 clone
+                                    rm -rf $DEPLOY_PATH/*
+                                    rm -rf $DEPLOY_PATH/.* 2>/dev/null || true
+                                    git clone -b develop https://github.com/shs91/prep.git $DEPLOY_PATH
+                                fi
 
-# MariaDB
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=dwmaster
-DB_PASSWORD=aws190131!
-DB_NAME=riseone
+                                # .env 파일 복사
+                                mv /tmp/prep.env $DEPLOY_PATH/server/.env
 
-# 토스 페이먼츠
-TOSS_CLIENT_KEY=test_ck_LlDJaYngrozLoW0KWKblVezGdRpX
-TOSS_SECRET_KEY=test_sk_ZLKGPx4M3M1w0ZWybw423BaWypv1
-
-# 이메일 (SMTP)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=eomgevent@gmail.com
-SMTP_PASS=gfkbxpefmhkanlug
-ENVEOF
-
-                            # npm install 및 PM2 재시작
-                            cd $DEPLOY_PATH/server
-                            npm install --omit=dev
-                            pm2 restart prep || pm2 start $DEPLOY_PATH/server/src/app.js --name prep
+                                # npm install 및 PM2 재시작
+                                cd $DEPLOY_PATH/server
+                                npm install --omit=dev
+                                pm2 restart prep || pm2 start $DEPLOY_PATH/server/src/app.js --name prep
 ENDSSH
-                    '''
+                        '''
+                    }
                 }
             }
         }
