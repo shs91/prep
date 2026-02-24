@@ -17,7 +17,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(['deploy-ssh-key']) {
+                sshagent(['prep-dev-deploy-ssh-key']) {
                     sh '''
                         # 파일 전송
                         rsync -avz --exclude='node_modules' --exclude='.git' \
