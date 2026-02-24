@@ -5,7 +5,7 @@
     // 설정
     const CONFIG = {
         API_BASE_URL: '/prep/api',
-        TOSS_CLIENT_KEY: 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq' // 테스트 키 (실제 운영시 변경 필요)
+        TOSS_CLIENT_KEY: 'test_gck_EP59LybZ8BJePNvQpX2B86GYo7pR' // 테스트 키 (실제 운영시 변경 필요)
     };
 
     // 상태 관리
