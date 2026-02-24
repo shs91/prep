@@ -1,5 +1,5 @@
 -- Prep 결제 모듈 데이터베이스 스키마
--- 실행: mysql -u root -p prep < schema.sql
+-- 실행: mysql -u root -p riseone < schema.sql
 
 CREATE TABLE IF NOT EXISTS tb_prep_products (
     id INT AUTO_INCREMENT PRIMARY KEY COMMENT '상품 ID',
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS tb_prep_payments (
     toss_response JSON COMMENT '토스 API 응답 전체 저장',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '생성일시',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일시',
-    FOREIGN KEY (product_id) REFERENCES products (id)
+    FOREIGN KEY (product_id) REFERENCES tb_prep_products (id)
 ) COMMENT '결제 테이블';
 
 -- 인덱스
