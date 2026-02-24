@@ -5,7 +5,7 @@ const { pool } = require('../config/database');
  */
 async function getAllActiveProducts() {
     const [rows] = await pool.execute(
-        'SELECT id, name, price, description FROM products WHERE is_active = TRUE ORDER BY id'
+        'SELECT id, name, price, description FROM tb_prep_products WHERE is_active = TRUE ORDER BY id'
     );
     return rows;
 }
@@ -15,7 +15,7 @@ async function getAllActiveProducts() {
  */
 async function getProductById(id) {
     const [rows] = await pool.execute(
-        'SELECT id, name, price, description FROM products WHERE id = ? AND is_active = TRUE',
+        'SELECT id, name, price, description FROM tb_prep_products WHERE id = ? AND is_active = TRUE',
         [id]
     );
     return rows[0] || null;

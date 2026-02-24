@@ -7,7 +7,7 @@ async function createPayment(paymentData) {
     const { orderId, productId, amount, customerName, customerPhone, customerEmail, customerBirth } = paymentData;
 
     const [result] = await pool.execute(
-        `INSERT INTO payments (order_id, product_id, amount, customer_name, customer_phone, customer_email, customer_birth)
+        `INSERT INTO tb_prep_payments (order_id, product_id, amount, customer_name, customer_phone, customer_email, customer_birth)
          VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [orderId, productId, amount, customerName, customerPhone, customerEmail, customerBirth]
     );
@@ -21,8 +21,8 @@ async function createPayment(paymentData) {
 async function getPaymentByOrderId(orderId) {
     const [rows] = await pool.execute(
         `SELECT p.*, pr.name as product_name
-         FROM payments p
-         JOIN products pr ON p.product_id = pr.id
+         FROM tb_prep_payments p
+         JOIN tb_prep_products pr ON p.product_id = pr.id
          WHERE p.order_id = ?`,
         [orderId]
     );
@@ -34,7 +34,7 @@ async function getPaymentByOrderId(orderId) {
  */
 async function updatePaymentConfirmed(orderId, paymentKey, tossResponse) {
     const [result] = await pool.execute(
-        `UPDATE payments
+        `UPDATE tb_prep_payments
          SET payment_key = ?, status = 'DONE', paid_at = NOW(), toss_response = ?
          WHERE order_id = ?`,
         [paymentKey, JSON.stringify(tossResponse), orderId]
@@ -47,7 +47,7 @@ async function updatePaymentConfirmed(orderId, paymentKey, tossResponse) {
  */
 async function updatePaymentFailed(orderId, tossResponse) {
     const [result] = await pool.execute(
-        `UPDATE payments
+        `UPDATE tb_prep_payments
          SET status = 'FAILED', toss_response = ?
          WHERE order_id = ?`,
         [JSON.stringify(tossResponse), orderId]
@@ -60,7 +60,7 @@ async function updatePaymentFailed(orderId, tossResponse) {
  */
 async function updatePaymentCanceled(orderId, tossResponse) {
     const [result] = await pool.execute(
-        `UPDATE payments
+        `UPDATE tb_prep_payments
          SET status = 'CANCELED', canceled_at = NOW(), toss_response = ?
          WHERE order_id = ?`,
         [JSON.stringify(tossResponse), orderId]
