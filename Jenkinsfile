@@ -38,7 +38,7 @@ pipeline {
                             # .env 파일 생성
                             cat > $DEPLOY_PATH/server/.env << 'ENVEOF'
 # 서버
-PORT=3000
+PORT=3001
 NODE_ENV=development
 
 # MariaDB
