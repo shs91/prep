@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DEPLOY_PATH = '/var/www/prep'
-        SERVER_PATH = '/var/www/prep/server'
+        DEPLOY_PATH = '/app/service/prep'
+        SERVER_PATH = '/app/service/prep/server'
     }
 
     stages {
