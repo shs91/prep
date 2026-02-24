@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 완료 - Prep Education</title>
+    <link rel="stylesheet" href="css/payment.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>결제 처리 중</h1>
+            <p>결제를 확인하고 있습니다.</p>
+        </header>
+
+        <main class="main-content">
+            <!-- 로딩 상태 -->
+            <div id="loadingState" class="result-container">
+                <div class="loading active">
+                    <div class="spinner"></div>
+                    <p>결제를 확인하고 있습니다...</p>
+                </div>
+            </div>
+
+            <!-- 성공 상태 -->
+            <div id="successState" class="result-container" style="display: none;">
+                <div class="result-icon success">&#10004;</div>
+                <h2 class="result-title">결제가 완료되었습니다!</h2>
+                <p class="result-message">등록하신 이메일로 상세 안내가 발송됩니다.</p>
+
+                <div id="paymentDetails" class="result-details">
+                    <!-- 결제 상세 정보가 여기에 표시됩니다 -->
+                </div>
+
+                <a href="index.html" class="btn btn-primary">홈으로 돌아가기</a>
+            </div>
+
+            <!-- 실패 상태 -->
+            <div id="failState" class="result-container" style="display: none;">
+                <div class="result-icon fail">&#10006;</div>
+                <h2 class="result-title">결제 승인에 실패했습니다</h2>
+                <p id="failMessage" class="result-message">다시 시도해주세요.</p>
+
+                <a href="payment.html" class="btn btn-primary">다시 결제하기</a>
+                <a href="index.html" class="btn btn-secondary">홈으로 돌아가기</a>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/payment.js"></script>
+    <script>
+        (async function() {
+            const loadingState = document.getElementById('loadingState');
+            const successState = document.getElementById('successState');
+            const failState = document.getElementById('failState');
+            const failMessage = document.getElementById('failMessage');
+            const paymentDetails = document.getElementById('paymentDetails');
+
+            try {
+                // 결제 승인 요청
+                const result = await PaymentModule.confirmPayment();
+
+                loadingState.style.display = 'none';
+
+                if (result.success) {
+                    // 결제 상태 조회
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const orderId = urlParams.get('orderId');
+                    const amount = urlParams.get('amount');
+
+                    paymentDetails.innerHTML = `
+                        <div class="detail-row">
+                            <span class="detail-label">주문번호</span>
+                            <span class="detail-value">${orderId}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">결제금액</span>
+                            <span class="detail-value">${PaymentModule.formatPrice(parseInt(amount))}원</span>
+                        </div>
+                    `;
+
+                    successState.style.display = 'block';
+                    document.querySelector('.header h1').textContent = '결제 완료';
+                    document.querySelector('.header p').textContent = '결제가 성공적으로 완료되었습니다.';
+                } else {
+                    failMessage.textContent = result.message || '결제 승인에 실패했습니다.';
+                    failState.style.display = 'block';
+                    document.querySelector('.header h1').textContent = '결제 실패';
+                    document.querySelector('.header p').textContent = '결제 처리 중 문제가 발생했습니다.';
+                }
+            } catch (error) {
+                console.error('결제 확인 오류:', error);
+                loadingState.style.display = 'none';
+                failMessage.textContent = '결제 확인 중 오류가 발생했습니다.';
+                failState.style.display = 'block';
+            }
+        })();
+    </script>
+</body>
+</html>

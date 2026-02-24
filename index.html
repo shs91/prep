@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>강의 결제 - Prep Education</title>
+    <link rel="stylesheet" href="css/payment.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>강의 결제</h1>
+        <p>원하시는 강의를 선택하고 결제를 진행해주세요.</p>
+      </header>
+
+      <main class="main-content">
+        <!-- 에러 메시지 -->
+        <div id="errorMessage" class="error-message"></div>
+
+        <!-- 로딩 -->
+        <div id="loading" class="loading">
+          <div class="spinner"></div>
+          <p>처리 중입니다...</p>
+        </div>
+
+        <form id="customerForm">
+          <!-- 상품 선택 -->
+          <section class="section">
+            <h2 class="section-title">강의 선택</h2>
+            <div id="productList" class="product-list">
+              <!-- 상품 목록이 여기에 렌더링됩니다 -->
+            </div>
+          </section>
+
+          <!-- 고객 정보 -->
+          <section class="section">
+            <h2 class="section-title">수강생 정보</h2>
+
+            <div class="form-group">
+              <label for="customerName"
+                >이름 <span class="required">*</span></label
+              >
+              <input
+                type="text"
+                id="customerName"
+                name="customerName"
+                placeholder="홍길동"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="customerPhone"
+                >휴대폰 번호 <span class="required">*</span></label
+              >
+              <input
+                type="tel"
+                id="customerPhone"
+                name="customerPhone"
+                placeholder="010-1234-5678"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="customerEmail"
+                >이메일 <span class="required">*</span></label
+              >
+              <input
+                type="email"
+                id="customerEmail"
+                name="customerEmail"
+                placeholder="example@email.com"
+                required
+              />
+              <p class="hint">결제 완료 후 이메일로 안내가 발송됩니다.</p>
+            </div>
+
+            <div class="form-group">
+              <label for="customerBirth"
+                >생년월일 <span class="required">*</span></label
+              >
+              <input
+                type="text"
+                id="customerBirth"
+                name="customerBirth"
+                placeholder="1990-01-15"
+                required
+              />
+              <p class="hint">YYYY-MM-DD 형식으로 입력해주세요.</p>
+            </div>
+          </section>
+
+          <!-- 결제 금액 -->
+          <div class="total-section">
+            <div class="total-row">
+              <span class="total-label">총 결제금액</span>
+              <span id="totalAmount" class="total-amount">0원</span>
+            </div>
+          </div>
+
+          <!-- 결제 버튼 -->
+          <button type="submit" id="payButton" class="btn btn-primary">
+            결제하기
+          </button>
+          <!-- <a href="index.html" class="btn btn-secondary">돌아가기</a> -->
+        </form>
+      </main>
+    </div>
+
+    <!-- 토스 페이먼츠 SDK -->
+    <script src="https://js.tosspayments.com/v2/standard"></script>
+    <script src="js/payment.js"></script>
+  </body>
+</html>

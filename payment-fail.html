@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 실패 - Prep Education</title>
+    <link rel="stylesheet" href="css/payment.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+            <h1>결제 실패</h1>
+            <p>결제 처리 중 문제가 발생했습니다.</p>
+        </header>
+
+        <main class="main-content">
+            <div class="result-container">
+                <div class="result-icon fail">&#10006;</div>
+                <h2 class="result-title">결제가 실패했습니다</h2>
+                <p id="errorMessage" class="result-message">결제가 취소되었거나 오류가 발생했습니다.</p>
+
+                <div id="errorDetails" class="result-details" style="display: none;">
+                    <div class="detail-row">
+                        <span class="detail-label">오류 코드</span>
+                        <span id="errorCode" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">오류 내용</span>
+                        <span id="errorDetail" class="detail-value">-</span>
+                    </div>
+                </div>
+
+                <a href="payment.html" class="btn btn-primary">다시 결제하기</a>
+                <a href="index.html" class="btn btn-secondary">홈으로 돌아가기</a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const message = urlParams.get('message');
+
+            const errorMessage = document.getElementById('errorMessage');
+            const errorDetails = document.getElementById('errorDetails');
+            const errorCode = document.getElementById('errorCode');
+            const errorDetail = document.getElementById('errorDetail');
+
+            if (code || message) {
+                errorDetails.style.display = 'block';
+
+                if (code) {
+                    errorCode.textContent = code;
+                }
+
+                if (message) {
+                    errorMessage.textContent = decodeURIComponent(message);
+                    errorDetail.textContent = decodeURIComponent(message);
+                }
+            }
+        })();
+    </script>
+</body>
+</html>
