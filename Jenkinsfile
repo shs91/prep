@@ -5,7 +5,7 @@ pipeline {
         DEPLOY_PATH = '/app/service/prep'
         SERVER_PATH = '/app/service/prep/server'
         SSH_HOST = '115.68.179.155'
-        SSH_USER = 'deploy'  // 배포용 사용자
+        SSH_USER = 'ec2-user'
     }
 
     stages {
