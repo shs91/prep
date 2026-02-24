@@ -35,6 +35,30 @@ pipeline {
                                 git clone -b develop https://github.com/shs91/prep.git $DEPLOY_PATH
                             fi
 
+                            # .env 파일 생성
+                            cat > $DEPLOY_PATH/server/.env << 'ENVEOF'
+# 서버
+PORT=3000
+NODE_ENV=development
+
+# MariaDB
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=dwmaster
+DB_PASSWORD=aws190131!
+DB_NAME=riseone
+
+# 토스 페이먼츠
+TOSS_CLIENT_KEY=test_gck_EP59LybZ8BJePNvQpX2B86GYo7pR
+TOSS_SECRET_KEY=test_gsk_AQ92ymxN341kaLlbvNevVajRKXvd
+
+# 이메일 (SMTP)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=eomgevent@gmail.com
+SMTP_PASS=gfkbxpefmhkanlug
+ENVEOF
+
                             # npm install 및 PM2 재시작
                             cd $DEPLOY_PATH/server
                             npm install --omit=dev
